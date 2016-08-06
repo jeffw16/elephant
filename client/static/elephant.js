@@ -27,12 +27,12 @@ $(function() {
     console.log("Retrieving stored zip " + zip);
   }
   // send geodata, pull stuff from server
-  socket.emit('getLatLongFromZip', zip);
+  socket.emit('getLatitudeLongitudeFromZip', zip);
 });
 
 // get geodata
 var lati, longi;
-socket.on('getLatLongFromZip', function( latitude, longitude ){
+socket.on('getLatitudeLongitudeFromZip', function( latitude, longitude ){
   lati = latitude;
   longi = longitude;
   console.log( "Latitude: " + latitude + ", Longitude: " + longitude );
