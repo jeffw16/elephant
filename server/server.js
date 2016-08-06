@@ -5,9 +5,9 @@ var fs = require('fs');
 
 const viewRange = 1;
 
-var Room = function(lat, long, name){
-	this.lat = lat;
-	this.long = long;
+var Room = function(latitude, longitude, name){
+	this.latitude = latitude;
+	this.longitude = longitude;
 	this.name = name;
 	this.topics = [];
 };
@@ -30,22 +30,22 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
-  socket.on('newTopic', function(lat, long, roomID, user, text){
+  socket.on('newTopic', function(latitude, longitude, roomID, user, text){
   	createTopic(getRoomByID(roomID), user, text);
     io.emit('newTopic', roomID, messageID, user, text);
   });
 
-  socket.on('newRoom', function(lat, long, roomID, name){
-  	createRoom(lat,long,name);
+  socket.on('newRoom', function(latitude, longitude, roomID, name){
+  	createRoom(latitude,longitude,name);
     io.emit('newRoom',roomID, name);
   });
 
-  socket.on('newMessage', function(lat, long, roomID, topicID, user, text){
+  socket.on('newMessage', function(latitude, longitude, roomID, topicID, user, text){
   	createMessage(getTopicByID(getRoomByID(roomID), topicID), user,text);
     io.emit('newMessage', topicID, user, text);
   });
 
-	socket.on('getLatLongFromZip', function(zip){
+	socket.on('getlatitudelongitudeFromZip', function(zip){
 		var a = "";
 		fs.readfile('zipdb','utf8',function(err,data){
 			if (err){
@@ -53,16 +53,16 @@ io.on('connection', function(socket){
 			}
 			a = data;
 		});
-		var lat =  a.substring(a.indexOf(zip)+6,a.indexOf(zip)+14);
-		var long = a.substring(a.indexOf(zip)+17,a.indexOf(zip)+26);
-    io.emit('getLatLongFromZip', lat, long);
+		var latitude =  a.substring(a.indexOf(zip)+6,a.indexOf(zip)+14);
+		var longitude = a.substring(a.indexOf(zip)+17,a.indexOf(zip)+26);
+    io.emit('getlatitudelongitudeFromZip', latitude, longitude);
   });
 
-  socket.on('getRoomsInArea', function(lat, long){
+  socket.on('getRoomsInArea', function(latitude, longitude){
     var roomsInArea = [];
     for(var i = 0; i<rooms.length; i++){
       var r = rooms[i];
-      var distance = Math.abs(lat-r.lat) + Math.abs(long-r.long);
+      var distance = Math.abs(latitude-r.latitude) + Math.abs(longitude-r.longitude);
       if(distance<=viewRange){
         roomsInArea.push(r);
       }
@@ -84,8 +84,8 @@ function getTopicByID(room, id){
 	return room.topics[id];
 }
 
-function createRoom(lat, long, name){
-  	var newRoom = new Room(lat, long, name);
+function createRoom(latitude, longitude, name){
+  	var newRoom = new Room(latitude, longitude, name);
   	rooms.push(newRoom);
 }
 

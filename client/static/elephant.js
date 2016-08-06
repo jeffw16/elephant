@@ -1,3 +1,6 @@
+// init socket.io
+var socket = io();
+
 // Setup script on document load
 $(function() {
   console.log("elephant client v0.0.1");
@@ -21,11 +24,19 @@ $(function() {
     document.cookie = "elephant_zipcode=" + givenzip;
     console.log("Zip code stored as " + givenzip);
   } else {
-    alert(zip);
+    console.log("Retrieving stored zip " + zip);
   }
   // send geodata, pull stuff from server
+  socket.emit('getLatLongFromZip', zip);
+});
 
-  //
+// get geodata
+var lati, longi;
+socket.on('getLatLongFromZip', function( latitude, longitude ){
+  lati = latitude;
+  longi = longitude;
+  console.log( "Latitude: " + latitude + ", Longitude: " + longitude );
+  socket.emit('getRoomsInArea', latitude, longitude );
 });
 
 // Room selection
