@@ -45,18 +45,18 @@ io.on('connection', function(socket){
     io.emit('newMessage', topicID, user, text);
   });
 	
-	socket.on('getlatitudelongitudeFromZip', function(zip){
-		var a = "";
-		fs.readfile('zipdb','utf8',function(err,data){
-			if (err){
-				return "";
-			}
-			a = data;
-		});
-		var latitude =  a.substring(a.indexOf(zip)+6,a.indexOf(zip)+14);
-		var longitude = a.substring(a.indexOf(zip)+17,a.indexOf(zip)+26);
-	  io.emit('getlatitudelongitudeFromZip', latitude, longitude);
-	});
+	socket.on('getLatitudeLongitudeFromZip', function(zip){
+  	var a = "";
+  	fs.readfile('zipdb','utf8',function(err,data){
+  		if (err){
+  			return "";
+  		}
+  		a = data;
+  	});
+  	var latitude =  a.substring(a.indexOf(zip)+6,a.indexOf(zip)+14);
+  	var longitude = a.substring(a.indexOf(zip)+17,a.indexOf(zip)+26);
+    io.emit('getLatitudeLongitudeFromZip', latitude, longitude);
+  });
 
   socket.on('getRoomsInArea', function(latitude, longitude){
     var roomsInArea = [];
