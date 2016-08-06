@@ -33,24 +33,18 @@ function getFindMeZip(zip){
   var lat =  a.substring(a.indexOf(zip)+6,a.indexOf(zip)+14);
   var long = a.substring(a.indexOf(zip)+17,a.indexOf(zip)+26);
 }
-function getFindMeWeather(wc){
-  var a = "";
-  fs = require('fs');
-  fs.readfile('wcdb','utf8',function(err,data){
-    if (err){
-      return "";
-    }
-    a = data;
-  });
-  var lat =  a.substring(a.indexOf(wc)+6,a.indexOf(wc)+14);
-  var long = a.substring(a.indexOf(wc)+17,a.indexOf(wc)+26);
+function setGeo(){
+  var lat = 0;
+  var long = 0;
 }
 //html <p><button onclick="geoFindMe()">Get location from browser</button></p>
 //html <form action = "getFindMeZip()"> Zip:
           //<input type = "text" name = "Zip:"><br>
           //<input type = "submit" value ="Get location from Zip">
-//html <form action = "getFindMeWeather()"> WeatherCode:
-          //<input type = "text" name = "WeatherCode:"<br>
-          //<input  type = "submit" value ="Get location from Weathercode">
-
+          //</form>
+//html <form action = "setGeo()">Set Longitude and Latitude
+          //<input type = "text" name = "Longitude:"><br>
+          //<input type = "text" name = "Latitude:"><br>
+          //<input type = "submit" value = "Submit Location">
+          //</form>
 //<div id="out"></div>
