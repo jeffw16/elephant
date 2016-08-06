@@ -1,18 +1,26 @@
+
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : '< MySQL username >',
-  password : '< MySQL password >',
-  database : '<your database name>'
+  host     : 'mysql.mywikis.com',
+  username : 'elephantweb',
+  password : '1999twothousand',
+  database : 'elephant_testing',
+  port: 3306
 });
 
-connection.connect();
 
-connection.query('SELECT * from < table name >', function(err, rows, fields) {
+connection.connect(function(err){
+if(!err)
+    console.log("Database is connected ... nn");
+ else
+    console.log("Error connecting database ... nn");
+});
+
+
+  connection.query('SELECT * FROM users', function(err, rows, fields) {
   if (!err)
     console.log('The solution is: ', rows);
-  else
-    console.log('Error while performing Query.');
-});
+  //  console.log('Error while performing Query.',err);
+  });
 
 connection.end();
