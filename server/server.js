@@ -42,7 +42,6 @@ io.on('connection', function(socket){
 
   socket.on('newMessage', function(lat, long, roomID, topicID, user, text){
   	createMessage(getTopicByID(getRoomByID(roomID), topicID), user,text);
-    //var ret = JSON.parse('{"ret:[{user:'+user+'},{}]}"');
     io.emit('newMessage', topicID, user, text);
   });
 
