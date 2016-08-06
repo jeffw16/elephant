@@ -21,5 +21,36 @@ function geoFindMe() {
 
   navigator.geolocation.getCurrentPosition(success, error);
 }
-//html <p><button onclick="geoFindMe()">Get Location</button></p>
+function getFindMeZip(zip){
+  var a = "";
+  fs = require('fs');
+  fs.readfile('zipdb','utf8',function(err,data){
+    if (err){
+      return "";
+    }
+    a = data;
+  });
+  var lat =  a.substring(a.indexOf(zip)+6,a.indexOf(zip)+14);
+  var long = a.substring(a.indexOf(zip)+17,a.indexOf(zip)+26);
+}
+function getFindMeWeather(wc){
+  var a = "";
+  fs = require('fs');
+  fs.readfile('wcdb','utf8',function(err,data){
+    if (err){
+      return "";
+    }
+    a = data;
+  });
+  var lat =  a.substring(a.indexOf(wc)+6,a.indexOf(wc)+14);
+  var long = a.substring(a.indexOf(wc)+17,a.indexOf(wc)+26);
+}
+//html <p><button onclick="geoFindMe()">Get location from browser</button></p>
+//html <form action = "getFindMeZip()"> Zip:
+          //<input type = "text" name = "Zip:"><br>
+          //<input type = "submit" value ="Get location from Zip">
+//html <form action = "getFindMeWeather()"> WeatherCode:
+          //<input type = "text" name = "WeatherCode:"<br>
+          //<input  type = "submit" value ="Get location from Weathercode">
+
 //<div id="out"></div>
