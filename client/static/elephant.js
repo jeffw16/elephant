@@ -1,12 +1,25 @@
-// Channel selection
-$(".channels-item").click(function(){
-  if ( !$(this).hasClass("channels-item-active") ) {
-    $("channels-item").each(function(index,el){
-      alert( "This el is " + el + " and blah");
-      if ( $(el).hasClass("channels-item-active") ) {
-        $(el).removeClass("channels-item-active");
+// Room selection
+$(".rooms-item").click(function(){
+  if ( !$(this).hasClass("rooms-item-active") ) {
+    $(".rooms-item").each(function(index,el){
+      if ( $(el).hasClass("rooms-item-active") ) {
+        $(el).removeClass("rooms-item-active").removeClass("active");
       }
     });
-    $(this).addClass("channels-item-active").addClass("active");
+    $(this).addClass("rooms-item-active").addClass("active");
   }
+});
+
+// Question selection
+$(".questions-item").click(function(){
+  if ( !$(this).hasClass("questions-item-active") ) {
+    $(".questions-item").each(function(index,el){
+      if ( $(el).hasClass("questions-item-active") ) {
+        $(el).removeClass("questions-item-active").removeClass("active");
+      }
+    });
+    $(this).addClass("questions-item-active").addClass("active");
+  }
+  // pull content for selected question into the pane
+  $("#question-pane").html("<p>hi</p>");
 });
