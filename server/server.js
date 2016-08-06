@@ -1,6 +1,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var fs = require('fs');
 
 const viewRange = 1;
 
@@ -41,7 +42,33 @@ io.on('connection', function(socket){
 
   socket.on('newMessage', function(lat, long, roomID, topicID, user, text){
   	createMessage(getTopicByID(getRoomByID(roomID), topicID), user,text);
+    //var ret = JSON.parse('{"ret:[{user:'+user+'},{}]}"');
     io.emit('newMessage', topicID, user, text);
+  });
+
+	socket.on('getLatLongFromZip', function(zip){
+		var a = "";
+		fs.readfile('zipdb','utf8',function(err,data){
+			if (err){
+				return "";
+			}
+			a = data;
+		});
+		var lat =  a.substring(a.indexOf(zip)+6,a.indexOf(zip)+14);
+		var long = a.substring(a.indexOf(zip)+17,a.indexOf(zip)+26);
+    io.emit('getLatLongFromZip', lat, long);
+  });
+
+  socket.on('getRoomsInArea', function(lat, long){
+    var roomsInArea = [];
+    for(var i = 0; i<rooms.length; i++){
+      var r = rooms[i];
+      var distance = Math.abs(lat-r.lat) + Math.abs(long-r.long);
+      if(distance<=viewRange){
+        roomsInArea.push(r);
+      }
+    }
+    socket.emit('newMessage', roomsInArea);
   });
 });
 
@@ -59,7 +86,7 @@ function getTopicByID(room, id){
 }
 
 function createRoom(lat, long, name){
-  	newRoom = new Room(lat, long, name);
+  	var newRoom = new Room(lat, long, name);
   	rooms.push(newRoom);
 }
 
