@@ -5,8 +5,8 @@ var connection = mysql.createConnection({
   username : 'elephantweb',
   password : '1999twothousand',
   database : 'elephant_testing',
-  port: 3306
 });
+
 
 
 connection.connect(function(err){
