@@ -226,6 +226,5 @@ function suggestionsTimer() {
     socket.emit('getSuggestion', $("#write-answer-content").val());
   }
   lastState = currState;
-  setTimeout(2000); //ms
-  suggestionsTimer();
+  setTimeout(suggestionsTimer(), 2000); //ms
 }
