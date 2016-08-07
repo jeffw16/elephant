@@ -6,6 +6,16 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var fs = require('fs');
+var mysql = require('mysql');
+
+var pool      =    mysql.createPool({
+    connectionLimit : 100, //important
+    host     : 'w.chompfish.xyz',
+    user     : 'myuser',
+    password : 'mypass',
+    database : 'elephant_testing',
+    debug    :  false
+});
 
 const viewRange = 1;
 
@@ -17,20 +27,74 @@ var Room = function(latitude, longitude, name, id){
 	this.topics = [];
 };
 
-var Topic = function(user, text, id){
+var Topic = function(user, text, roomID, id){
   this.id = id;
 	this.user = user;
 	this.text = text;
+  this.roomID = roomID;
 	this.messages = [];
 }
 
-var Message = function(user, text, id){
+var Message = function(user, text, roomID, topicID, id){
   this.id = id;
+  this.roomID = roomID;
+  this.topicID = topicID;
 	this.user = user;
 	this.text = text;
 };
 
 var rooms = [];
+
+
+function sendQuery(data, callback) {
+
+    pool.getConnection(function(err,connection){
+        if (err) {
+          console.log('Cannot connect');
+          return;
+        }
+
+        console.log('connected as id ' + connection.threadId);
+        console.log(data);
+        connection.query(data, function(err,rows){
+            connection.release();
+            if(!err) {
+              //console.log(rows);
+              callback(rows);
+            }else{
+              console.log("Error");
+            }
+        });
+  });
+}
+
+
+function loadFromDataBase(){
+  var row;
+  sendQuery("SELECT * from Rooms", function(data){
+    row = data;
+    objs = JSON.parse(JSON.stringify(row));
+
+    for(var i=0; i<objs.length; i++){
+      room = new Room(objs[i].latitude, objs[i].longitude, objs[i].name, objs[i].id);
+      rooms.push(room);
+    }
+  });
+
+  sendQuery("SELECT * from Topics", function(data){
+    row = data;
+    objs = JSON.parse(JSON.stringify(row));
+
+    for(var i=0; i<objs.length; i++){
+      room = new Room(objs[i].latitude, objs[i].longitude, objs[i].name, objs[i].id);
+      console.log(room.id);
+      rooms.push(room);
+    }
+  });
+}
+
+loadFromDataBase();
+
 app.use(express.static('client'));
 app.get('/', function(req, res){
   console.log(__dirname);
@@ -121,14 +185,14 @@ function createRoom(latitude, longitude, name){
 }
 
 function createTopic(room, user, text){
-  var topic = new Topic(user, text, room.topics.length);
+  var topic = new Topic(user, text, room.id, room.topics.length);
 	room.topics.push(topic);
   topic.messages = [];
   return topic;
 }
 
 function createMessage(topic, user, text){
-  var message = new Message(user, text, topic.messages.length);
+  var message = new Message(user, text, topic.roomID, topic.id, topic.messages.length);
 	topic.messages.push(message);
   return message;
 }
