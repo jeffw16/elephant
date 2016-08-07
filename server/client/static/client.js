@@ -106,14 +106,21 @@ function update_questions_list() {
   $("#questions-list").html(questions_html_insert);
 }
 
-function update_messages_list() {
+/*function update_messages_list() {
   messages_html_insert = "";
-  console.log(rooms[roomi].topics[questioni].messages.length);
+  console.log(questioni+" "+rooms[roomi].topics[questioni].messages.length);
   for (var j = 0; j < rooms[roomi].topics[questioni].messages.length; j++ ) {
     console.log("hoop");
     messages_html_insert += '<li role="presentation" class="answers-item" id="answer-' + rooms[roomi].topics[questioni].messages[j].text + '"><p>' + rooms[roomi].topics[questioni].messages[j].text + '</p></li>';
   }
   $("#answers-list").html(messages_html_insert);
+}*/
+function update_messages_list() {
+  question_pane_html_insert = '<h2>' + rooms[roomi].topics[questioni].text + '</h2>';
+  for ( j = 0; j < rooms[roomi].topics[questioni].messages.length; j++ ) {
+    question_pane_html_insert += '<div class="well"><p>' + rooms[roomi].topics[questioni].messages[j].text + '</p></div>';
+  }
+  $("#question-pane").html(question_pane_html_insert);
 }
 
 socket.emit('getRoomsInArea', lati, longi );
@@ -151,28 +158,18 @@ $("#questions-list").on('click','.questions-item',function( event ){
     });
     $(this).addClass("questions-item-active").addClass("active");
     for ( k = 0; k < rooms[roomi].topics.length; k++ ) {
-      if ( rooms[roomi].topics[k] == $(this).attr('id').substring(9) ) {
+      console.log(rooms[roomi].topics[k].text + "- -" + $(this).attr('id').substring(9));
+      if ( rooms[roomi].topics[k].text == $(this).attr('id').substring(9) ) {
         questioni = k;
+        console.log("questioni set to " + questioni);
         console.log("" + questioni + " bc " + rooms[roomi].topics[k] + " and " + $(this).attr('id').substring(9));
         break;
       }
     }
     update_messages_list();
+     // pull content for selected question into the pane
   }
-  // pull content for selected question into the pane
-  $("#question-pane").html("<p>hi</p>");
-  rooms[roomi].topics[questioni].text = $(this).attr('id').substring(9);
-  for ( i = 0; i < rooms[roomi].topics.length; i++ ) {
-    if ( rooms[roomi].topics[i].text == rooms[roomi].topics[questioni].text ) {
-      questioni = i;
-      break;
-    }
-  }
-  question_pane_html_insert = '<h2>' + rooms[roomi].topics[questioni].text + '</h2>';
-  for ( j = 0; j < rooms[roomi].topics.length; j++ ) {
-    question_pane_html_insert += '<div class="well"><p>' + rooms[roomi].topics[questioni].text + '</p></div>';
-  }
-  $("#question-pane").html(question_pane_html_insert);
+ 
 });
 
 // Asking a question
@@ -189,7 +186,7 @@ $("#write-answer").click(function(){
   $("#write-answer-modal").modal();
 });
 $("#write-answer-submit").click(function(){
-  console.log(questioni+" "+ rooms[roomi].topics.length);
+  console.log(questioni+":: "+ rooms[roomi].topics.length);
   socket.emit('newMessage', rooms[roomi].id, rooms[roomi].topics[questioni].id, user, $("#write-answer-content").val());
   $("#write-answer-modal").modal('hide');
 });
