@@ -95,6 +95,9 @@ function update_rooms_list() {
   for (var i = 0; i < rooms.length; i++ ) {
     rooms_html_insert += '<li role="presentation" class="rooms-item" id="room-' + rooms[i].name + '"><a href="#">' + rooms[i].name + '</a></li>';
   }
+  if ( rooms.length == 0 ) {
+    rooms_html_insert = '<p><i>No rooms yet!</i> Simply press the "Create a room" button above to create a room.</p>';
+  }
   $("#rooms-list").html(rooms_html_insert);
 }
 
@@ -102,6 +105,9 @@ function update_questions_list() {
   questions_html_insert = "";
   for (var j = 0; j < rooms[roomi].topics.length; j++ ) {
     questions_html_insert += '<li role="presentation" class="questions-item" id="question-' + rooms[roomi].topics[j].text + '"><a href="#">' + rooms[roomi].topics[j].text + '</a></li>';
+  }
+  if ( rooms[roomi].topics.length == 0 ) {
+    questions_html_insert = '<p><i>No questions yet!</i> Simply press the "Ask a question" button to begin asking your first question.';
   }
   $("#questions-list").html(questions_html_insert);
 }
@@ -119,6 +125,9 @@ function update_messages_list() {
   question_pane_html_insert = '<h2>' + rooms[roomi].topics[questioni].text + '</h2>';
   for ( j = 0; j < rooms[roomi].topics[questioni].messages.length; j++ ) {
     question_pane_html_insert += '<div class="well well-sm"><p>' + rooms[roomi].topics[questioni].messages[j].text + '</p></div>';
+  }
+  if ( rooms[roomi].topics[questioni].messages.length == 0 ) {
+    question_pane_html_insert = '<p><i>No answers here yet?</i> Want to help answer? Simply press the "Write an answer" button above to share your knowledge.</p>';
   }
   $("#question-pane").html(question_pane_html_insert);
 }
