@@ -1,29 +1,43 @@
+var express   =    require("express");
+var mysql     =    require('mysql');
+var app       =    express();
 
-var mysql      = require('mysql');
-var connection = mysql.createConnection({
-  host :     'w.chompfish.xyz',
-  user :     'myuser',
-  password : 'mypass',
-  database : 'elephant_testing',
+var pool      =    mysql.createPool({
+    connectionLimit : 100, //important
+    host     : 'w.chompfish.xyz',
+    user     : 'myuser',
+    password : 'mypass',
+    database : 'elephant_testing',
+    debug    :  false
 });
 
+function sendQuery(data) {
 
+    data = "SELECT Username FROM Users";
 
-connection.connect(function(err){
-if(!err)
-    console.log("Database is connected ... nn");
- else
-    console.log("Error connecting database ... nn");
-});
+    pool.getConnection(function(err,connection){
+        if (err) {
+          console.log('Cannot connect');
+          return;
+        }
 
+        console.log('connected as id ' + connection.threadId);
 
-  connection.query('SELECT * FROM Users', function(err, rows, fields) {
-  if (!err){
-    console.log('The solution is: ', rows);
-  }
-  else {
-    console.log('ERROR');
-  }
+        connection.query(data, function(err,rows){
+            connection.release();
+            if(!err) {
+              console.log(rows);
+              return rows;
+            }
+        });
   });
+}
 
-connection.end();
+sendQuery();
+
+
+// DONT BOTHER WITH THIS YET
+// connection.on('error', function(err) {
+//       console.log("Error");
+//       return;
+// });
