@@ -8,6 +8,9 @@ a {
 a:focus, a:hover {
   color: #ffa321;
 }
+.btn:focus {
+  color: #fff;
+}
 .alert-elephant {
   color: #fff7ea;
   background-color: #ffb54c;
@@ -25,22 +28,22 @@ a:focus, a:hover {
 }
 .btn-elephant-2 {
   color: #fff;
-  background-color: #b77733;
-  border-color: #7d3200;
+  background-color: #ffaf3e;
+  border-color: #d68109;
 }
 .btn-elephant-2:hover {
   color: #fff;
-  background-color: #975713;
-  border-color: #5d1200;
+  background-color: #df8f1e;
+  border-color: #b66100;
 }
 .btn-elephant-3 {
-  color: #fff;
-  background-color: #ffc61e;
+  color: #82600f;
+  background-color: #ffd697;
   border-color: #dead1b;
 }
 .btn-elephant-3:hover {
-  color: #fff;
-  background-color: #dfa600;
+  color: #624000;
+  background-color: #dfb677;
   border-color: #be8d00;
 }
 .nav-pills>li.active>a{
