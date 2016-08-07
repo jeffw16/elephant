@@ -221,6 +221,7 @@ $("#create-room-submit").click(function(){
 
 var lastState, currState;
 function suggestionsTimer() {
+  console.log("running timer");
   currState = $("#ask-question-content").val();
   if ( lastState != null && lastState == currState ) {
     socket.emit('getSuggestion', $("#write-answer-content").val());
