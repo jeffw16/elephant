@@ -36,6 +36,10 @@
   background-color: #dfa600;
   border-color: #be8d00;
 }
+a {
+    color: #ff8400;
+    text-decoration: none;
+}
 .nav-pills>li.active>a{
     color: #fff;
     background-color: #f89406;
