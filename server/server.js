@@ -1,14 +1,19 @@
-var app = require('express')();
+const VERSION = '0.0.1';
+const PORT = 80;
+
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var fs = require('fs');
 
 const viewRange = 1;
 
-var Room = function(latitude, longitude, name){
+var Room = function(latitude, longitude, name, id){
 	this.latitude = latitude;
 	this.longitude = longitude;
 	this.name = name;
+  this.id = id;
 	this.topics = [];
 };
 
@@ -24,30 +29,33 @@ var Message = function(user, text){
 };
 
 var rooms = [];
-
+app.use(express.static('client'));
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+  console.log(__dirname);
+  res.sendFile(__dirname + '/client/'+req);
+
 });
 
 io.on('connection', function(socket){
-  socket.on('newTopic', function(latitude, longitude, roomID, user, text){
-  	createTopic(getRoomByID(roomID), user, text);
-    io.emit('newTopic', roomID, messageID, user, text);
+
+  socket.on('newTopic', function(roomID, user, text){
+  	var topic = createTopic(getRoomByID(roomID), user, text);
+    io.emit('newTopic', roomID, topic);
   });
 
-  socket.on('newRoom', function(latitude, longitude, roomID, name){
-  	createRoom(latitude,longitude,name);
-    io.emit('newRoom',roomID, name);
+  socket.on('newRoom', function(latitude, longitude, name){
+  	var room = createRoom(latitude,longitude,name);
+    io.emit('newRoom',room);
   });
 
   socket.on('newMessage', function(latitude, longitude, roomID, topicID, user, text){
-  	createMessage(getTopicByID(getRoomByID(roomID), topicID), user,text);
-    io.emit('newMessage', topicID, user, text);
+  	var messsage = createMessage(getTopicByID(getRoomByID(roomID), topicID), user,text);
+    io.emit('newMessage', roomID, topicID, message);
   });
 
 	socket.on('getLatitudeLongitudeFromZip', function(zip){
   	var a = "";
-  	fs.readfile('zipdb','utf8',function(err,data){
+  	fs.readFile('zipdb','utf8',function(err,data){
   		if (err){
   			return "";
   		}
@@ -55,7 +63,24 @@ io.on('connection', function(socket){
   	});
   	var latitude =  a.substring(a.indexOf(zip)+6,a.indexOf(zip)+14);
   	var longitude = a.substring(a.indexOf(zip)+17,a.indexOf(zip)+26);
+    latitude = 0;
+    longitude = 0;
+    console.log(latitude+" "+longitude);
+
     io.emit('getLatitudeLongitudeFromZip', latitude, longitude);
+  });
+
+  socket.on('isCloseEnoughToRoom', function(latitude, longitude, roomID, callback){
+    var room = getRoomByID(roomID);
+    if(Math.abs(latitude-room.latitude)+Math.abs(longitude-room.longitude)<=viewRange){
+      callback(true,room);
+    }else{
+      callback(false, null);
+    }
+  }); 
+
+  socket.on('getRoom', function(roomID, callback){
+    callback(getRoomByID(roomID));
   });
 
   socket.on('getRoomsInArea', function(latitude, longitude){
@@ -71,9 +96,8 @@ io.on('connection', function(socket){
   });
 });
 
-const PORT = 80;
 http.listen(PORT, function(){
-	console.log('elephant server v0.0.1');
+	console.log('elephant server '+ VERSION);
   console.log('Starting on port ' + PORT);
 });
 
@@ -86,14 +110,20 @@ function getTopicByID(room, id){
 }
 
 function createRoom(latitude, longitude, name){
-  	var newRoom = new Room(latitude, longitude, name);
-  	rooms.push(newRoom);
+  console.log("Creating Room "+ name +" at "+latitude+" "+longitude);
+  	var room = new Room(latitude, longitude, name, rooms.length);
+  	rooms.push(room);
+    return room;
 }
 
 function createTopic(room, user, text){
-	room.topics.push(new Topic(user, text));
+  var topic = new Topic(user, text);
+	room.topics.push(topic);
+  return topic;
 }
 
 function createMessage(topic, user, text){
-	question.messages.push(new Message(user, text));
+  var message = new Message(user, text);
+	question.messages.push(message);
+  return message;
 }
