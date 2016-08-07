@@ -118,7 +118,7 @@ function update_questions_list() {
 function update_messages_list() {
   question_pane_html_insert = '<h2>' + rooms[roomi].topics[questioni].text + '</h2>';
   for ( j = 0; j < rooms[roomi].topics[questioni].messages.length; j++ ) {
-    question_pane_html_insert += '<div class="well"><p>' + rooms[roomi].topics[questioni].messages[j].text + '</p></div>';
+    question_pane_html_insert += '<div class="well well-sm"><p>' + rooms[roomi].topics[questioni].messages[j].text + '</p></div>';
   }
   $("#question-pane").html(question_pane_html_insert);
 }
@@ -169,7 +169,7 @@ $("#questions-list").on('click','.questions-item',function( event ){
     update_messages_list();
      // pull content for selected question into the pane
   }
- 
+
 });
 
 // Asking a question
