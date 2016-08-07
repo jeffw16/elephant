@@ -44,7 +44,8 @@ var Message = function(user, text, roomID, topicID, id){
 };
 
 var rooms = [];
-
+var latitude;
+var longitude;
 
 function sendQuery(data, callback) {
 
@@ -143,14 +144,11 @@ io.on('connection', function(socket){
   			return "";
   		}
   		a = data;
-  	});
-  	var latitude =  a.substring(a.indexOf(zip)+6,a.indexOf(zip)+14);
-  	var longitude = a.substring(a.indexOf(zip)+17,a.indexOf(zip)+26);
-    latitude = 0;
-    longitude = 0;
-    console.log(latitude+" "+longitude);
+      latitude =  (a.substring(a.indexOf(zip)+6, a.indexOf(zip)+16))/1;
+      longitude = (a.slice(a.indexOf(zip)+17, a.indexOf(zip)+28))/1;
+      io.emit('getLatitudeLongitudeFromZip', latitude, longitude);
 
-    io.emit('getLatitudeLongitudeFromZip', latitude, longitude);
+  	});
   });
 
   socket.on('isCloseEnoughToRoom', function(latitude, longitude, roomID, callback){
@@ -160,7 +158,7 @@ io.on('connection', function(socket){
     }else{
       callback(false, null);
     }
-  }); 
+  });
 
   socket.on('getRoom', function(roomID, callback){
     callback(getRoomByID(roomID));
