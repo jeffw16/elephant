@@ -219,11 +219,12 @@ $("#create-room-submit").click(function(){
 
 });
 
-var lastState, currState;
+var lastState = "";
+var currState;
 function suggestionsTimer() {
   console.log("running timer");
   currState = $("#ask-question-content").val();
-  if ( lastState != null && lastState == currState ) {
+  if ( lastState != "" && lastState == currState ) {
     socket.emit('getSuggestion', $("#write-answer-content").val());
   }
   lastState = currState;
