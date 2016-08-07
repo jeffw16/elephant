@@ -42,6 +42,8 @@ socket.on('getLatitudeLongitudeFromZip', function( latitude, longitude ){
   lati = latitude;
   longi = longitude;
   console.log( "Latitude: " + latitude + ", Longitude: " + longitude );
+  socket.emit('getRoomsInArea', lati, longi );
+  console.log("Retrieving all rooms in area.");
 });
 
 socket.on('newRoom', function(room){
@@ -96,7 +98,7 @@ function update_rooms_list() {
     rooms_html_insert += '<li role="presentation" class="rooms-item" id="room-' + rooms[i].name + '"><a href="#">' + rooms[i].name + '</a></li>';
   }
   if ( rooms.length == 0 ) {
-    rooms_html_insert = '<p><i>No rooms yet!</i> Simply press the "Create a room" button above to create a room.</p>';
+    rooms_html_insert = '<div class="alert alert-elephant"><p><i>No rooms yet!</i> Simply press the "Create a room" button above to create a room.</p></div>';
   }
   $("#rooms-list").html(rooms_html_insert);
 }
@@ -107,7 +109,7 @@ function update_questions_list() {
     questions_html_insert += '<li role="presentation" class="questions-item" id="question-' + rooms[roomi].topics[j].text + '"><a href="#">' + rooms[roomi].topics[j].text + '</a></li>';
   }
   if ( rooms[roomi].topics.length == 0 ) {
-    questions_html_insert = '<p><i>No questions yet!</i> Simply press the "Ask a question" button to begin asking your first question.';
+    questions_html_insert = '<div class="alert alert-elephant"><p><i>No questions yet!</i> Simply press the "Ask a question" button to begin asking your first question.</p></div>';
   }
   $("#questions-list").html(questions_html_insert);
 }
@@ -127,12 +129,11 @@ function update_messages_list() {
     question_pane_html_insert += '<div class="well well-sm"><p>' + rooms[roomi].topics[questioni].messages[j].text + '</p></div>';
   }
   if ( rooms[roomi].topics[questioni].messages.length == 0 ) {
-    question_pane_html_insert = '<p><i>No answers here yet?</i> Want to help answer? Simply press the "Write an answer" button above to share your knowledge.</p>';
+    question_pane_html_insert = '<div class="alert alert-elephant"><p><i>No answers here yet!</i> Want to help answer? Simply press the "Write an answer" button above to share your knowledge.</p></div>';
   }
   $("#question-pane").html(question_pane_html_insert);
 }
 
-socket.emit('getRoomsInArea', lati, longi );
 
 //$(document).ready(function(){
   // Room selection
@@ -208,4 +209,5 @@ $("#create-room-submit").click(function(){
   socket.emit('newRoom', lati, longi, $("#create-room-name").val());
   $("#create-room-modal").modal('hide');
 });
+
 });

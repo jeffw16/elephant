@@ -144,7 +144,7 @@ io.on('connection', function(socket){
   			return "";
   		}
   		a = data;
-      latitude =  (a.substring(a.indexOf(zip)+7, a.indexOf(zip)+16))/1;
+      latitude =  (a.substring(a.indexOf(zip)+6, a.indexOf(zip)+15))/1;
       longitude = (a.slice(a.indexOf(zip)+17, a.indexOf(zip)+28))/1;
       io.emit('getLatitudeLongitudeFromZip', latitude, longitude);
 
