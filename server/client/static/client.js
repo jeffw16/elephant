@@ -223,7 +223,7 @@ var lastState, currState;
 function suggestionsTimer() {
   currState = $("#ask-question-content").val();
   if ( lastState != null && lastState == currState ) {
-    socket.emit('wantSuggestion', $("#write-answer-content").val());
+    socket.emit('getSuggestion', $("#write-answer-content").val());
   }
   lastState = currState;
   setTimeout(2000); //ms
