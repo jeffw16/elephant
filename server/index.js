@@ -1,9 +1,9 @@
 
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
-  host     : 'mysql.mywikis.com',
-  username : 'elephantweb',
-  password : '1999twothousand',
+  host :     'w.chompfish.xyz',
+  user :     'myuser',
+  password : 'mypass',
   database : 'elephant_testing',
 });
 
@@ -17,10 +17,13 @@ if(!err)
 });
 
 
-  connection.query('SELECT * FROM users', function(err, rows, fields) {
-  if (!err)
+  connection.query('SELECT * FROM Users', function(err, rows, fields) {
+  if (!err){
     console.log('The solution is: ', rows);
-  //  console.log('Error while performing Query.',err);
+  }
+  else {
+    console.log('ERROR');
+  }
   });
 
 connection.end();
