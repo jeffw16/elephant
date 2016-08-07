@@ -17,13 +17,15 @@ var Room = function(latitude, longitude, name, id){
 	this.topics = [];
 };
 
-var Topic = function(user, text){
+var Topic = function(user, text, id){
+  this.id = id;
 	this.user = user;
 	this.text = text;
 	this.messages = [];
 }
 
-var Message = function(user, text){
+var Message = function(user, text, id){
+  this.id = id;
 	this.user = user;
 	this.text = text;
 };
@@ -48,8 +50,9 @@ io.on('connection', function(socket){
     io.emit('newRoom',room);
   });
 
-  socket.on('newMessage', function(latitude, longitude, roomID, topicID, user, text){
-  	var messsage = createMessage(getTopicByID(getRoomByID(roomID), topicID), user,text);
+  socket.on('newMessage', function(roomID, topicID, user, text){
+    console.log(roomID+" "+topicID);
+  	var message = createMessage(getTopicByID(getRoomByID(roomID), topicID), user,text);
     io.emit('newMessage', roomID, topicID, message);
   });
 
@@ -112,18 +115,20 @@ function getTopicByID(room, id){
 function createRoom(latitude, longitude, name){
   console.log("Creating Room "+ name +" at "+latitude+" "+longitude);
   	var room = new Room(latitude, longitude, name, rooms.length);
+    room.topics = [];
   	rooms.push(room);
     return room;
 }
 
 function createTopic(room, user, text){
-  var topic = new Topic(user, text);
+  var topic = new Topic(user, text, room.topics.length);
 	room.topics.push(topic);
+  topic.messages = [];
   return topic;
 }
 
 function createMessage(topic, user, text){
-  var message = new Message(user, text);
-	question.messages.push(message);
+  var message = new Message(user, text, topic.messages.length);
+	topic.messages.push(message);
   return message;
 }
