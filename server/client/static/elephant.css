@@ -1,3 +1,46 @@
 .container-fluid {
   padding-top: 15px;
 }
+.alert-elephant {
+  color: #fff7ea;
+  background-color: #ffb54c;
+  border-color: #f89406;
+}
+.btn-elephant-1 {
+  color: #fff;
+  background-color: #ff8400;
+  border-color: #ff7200;
+}
+.btn-elephant-1:hover {
+  color: #fff;
+  background-color: #df6400;
+  border-color: #df5200;
+}
+.btn-elephant-2 {
+  color: #fff;
+  background-color: #b77733;
+  border-color: #7d3200;
+}
+.btn-elephant-2:hover {
+  color: #fff;
+  background-color: #975713;
+  border-color: #5d1200;
+}
+.btn-elephant-3 {
+  color: #fff;
+  background-color: #ffc61e;
+  border-color: #dead1b;
+}
+.btn-elephant-3:hover {
+  color: #fff;
+  background-color: #dfa600;
+  border-color: #be8d00;
+}
+.nav-pills>li.active>a{
+    color: #fff;
+    background-color: #f89406;
+}
+.nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+    color: #fff;
+    background-color: #d87400;
+}
