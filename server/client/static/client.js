@@ -42,6 +42,8 @@ socket.on('getLatitudeLongitudeFromZip', function( latitude, longitude ){
   lati = latitude;
   longi = longitude;
   console.log( "Latitude: " + latitude + ", Longitude: " + longitude );
+  socket.emit('getRoomsInArea', lati, longi );
+  console.log("Retrieving all rooms in area.");
 });
 
 socket.on('newRoom', function(room){
@@ -132,7 +134,6 @@ function update_messages_list() {
   $("#question-pane").html(question_pane_html_insert);
 }
 
-socket.emit('getRoomsInArea', lati, longi );
 
 //$(document).ready(function(){
   // Room selection
@@ -208,4 +209,5 @@ $("#create-room-submit").click(function(){
   socket.emit('newRoom', lati, longi, $("#create-room-name").val());
   $("#create-room-modal").modal('hide');
 });
+
 });
