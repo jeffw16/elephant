@@ -94,6 +94,10 @@ socket.on('getRoomsInArea', function( roomsInArea ){
   */
 });
 
+socket.on('getSuggestion', function ( suggestion ){
+  $("#suggestion-display").html('Did you mean: <a href="javascript:$(\'#ask-question-modal\').modal("hide");$(\'#question-' + suggestion + '\');">' + suggestion + '</a>');
+});
+
 function update_rooms_list() {
   rooms_html_insert = "";
   for (var i = 0; i < rooms.length; i++ ) {
@@ -187,6 +191,7 @@ $("#questions-list").on('click','.questions-item',function( event ){
 // Asking a question
 $("#ask-question").click(function(){
   $("#ask-question-modal").modal();
+  suggestionsTimer();
 });
 $("#ask-question-submit").click(function(){
   socket.emit('newTopic', rooms[roomi].id, user, $("#ask-question-content").val());
@@ -213,3 +218,14 @@ $("#create-room-submit").click(function(){
 });
 
 });
+
+var lastState, currState;
+function suggestionsTimer() {
+  currState = $("#ask-question-content").val();
+  if ( lastState != null && lastState == currState ) {
+    socket.emit('wantSuggestion', $("#write-answer-content").val());
+  }
+  lastState = currState;
+  setTimeout(2000); //ms
+  suggestionsTimer();
+}
