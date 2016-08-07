@@ -221,11 +221,16 @@ $("#create-room-submit").click(function(){
 
 var lastState = "";
 var currState;
+var hasRequested = false;
 function suggestionsTimer() {
   console.log("running timer");
   currState = $("#ask-question-content").val();
-  if ( lastState != "" && lastState == currState ) {
+  if ( lastState != "" && lastState != currState ) {
+    hasRequested = false;
+  }
+  if ( lastState != "" && lastState == currState && !hasRequested ) {
     socket.emit('getSuggestion', $("#write-answer-content").val());
+    hasRequested = true;
   }
   lastState = currState;
   window.setTimeout(suggestionsTimer, 2000); //ms
