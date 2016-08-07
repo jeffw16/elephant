@@ -87,7 +87,7 @@ function loadFromDataBase(){
     objs = JSON.parse(JSON.stringify(row));
         for(var i=0; i<objs.length; i++){
       topic = new Topic(objs[i].user, objs[i].text, objs[i].roomID, objs[i].id);
-      room[objs[i].roomID].topics.push(room);
+      rooms[objs[i].roomID].topics.push(topic);
     }
 
   sendQuery("SELECT * from Messages", function(data){
@@ -96,7 +96,7 @@ function loadFromDataBase(){
 
     for(var i=0; i<objs.length; i++){
       message = new Message(objs[i].user, objs[i].text, objs[i].roomID, objs[i].topicID, objs[i].id);
-      room[objs[i].roomID].topics[objs[i].topicID].messages.push(messsage);
+      rooms[objs[i].roomID].topics[objs[i].topicID].messages.push(message);
     }
 
 
