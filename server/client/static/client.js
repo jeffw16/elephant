@@ -9,7 +9,7 @@ var user = "Bob";
 var lati, longi;
 // Setup script on document load
 $(function() {
-  console.log("elephant client v0.1.0");
+  console.log("elephant client v0.2.0");
   /*
   // get geodata
   if ("geolocation" in navigator) {
