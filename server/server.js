@@ -18,7 +18,7 @@ var pool      =    mysql.createPool({
     debug    :  false
 });
 
-const viewRange = 1;
+const viewRange = 0.5;
 
 var Room = function(latitude, longitude, name, id){
 	this.latitude = latitude;
@@ -139,14 +139,14 @@ io.on('connection', function(socket){
   });
 
 	socket.on('getLatitudeLongitudeFromZip', function(zip){
-  	var a = "";
   	fs.readFile('zipdb','utf8',function(err,data){
   		if (err){
-  			return "";
+  			console.log("ZIP CODE FATAL ERROR");
   		}
-  		a = data;
-      latitude =  (a.substring(a.indexOf(zip)+6, a.indexOf(zip)+15));
-      longitude = (a.slice(a.indexOf(zip)+17, a.indexOf(zip)+28));
+  		var a = data;
+      console.log(a.indexOf(zip));
+      var latitude =  (a.substring(a.indexOf(zip)+6, a.indexOf(zip)+15));
+      var longitude = (a.slice(a.indexOf(zip)+17, a.indexOf(zip)+28));
       socket.emit('getLatitudeLongitudeFromZip', latitude, longitude);
 
   	});
@@ -154,7 +154,7 @@ io.on('connection', function(socket){
 
   socket.on('isCloseEnoughToRoom', function(latitude, longitude, roomID, callback){
     var room = getRoomByID(roomID);
-    if(Math.abs(latitude-room.latitude)+Math.abs(longitude-room.longitude)<=viewRange){
+    if(Math.sqrt(Math.abs(latitude-room.latitude)+Math.abs(longitude-room.longitude))<=viewRange){
       callback(true,room);
     }else{
       callback(false, null);

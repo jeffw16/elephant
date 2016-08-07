@@ -24,16 +24,18 @@ $(function() {
   }
   */
   // store/check cookie in zip code
+
   var zip = document.cookie.replace(/(?:(?:^|.*;\s*)elephant_zipcode\s*\=\s*([^;]*).*$)|^.*$/, "$1");
   if ( zip == undefined || zip == null || zip == "" ) {
     givenzip = prompt("What is your zip code?");
     document.cookie = "elephant_zipcode=" + givenzip;
     console.log("Zip code stored as " + givenzip);
+    socket.emit('getLatitudeLongitudeFromZip', givenzip);
   } else {
     console.log("Retrieving stored zip " + zip);
+    socket.emit('getLatitudeLongitudeFromZip', zip);
   }
   // send geodata, pull stuff from server
-  socket.emit('getLatitudeLongitudeFromZip', zip);
 
 update_rooms_list();
 
