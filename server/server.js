@@ -44,7 +44,7 @@ io.on('connection', function(socket){
   	createMessage(getTopicByID(getRoomByID(roomID), topicID), user,text);
     io.emit('newMessage', topicID, user, text);
   });
-	
+
 	socket.on('getLatitudeLongitudeFromZip', function(zip){
   	var a = "";
   	fs.readfile('zipdb','utf8',function(err,data){
@@ -67,13 +67,14 @@ io.on('connection', function(socket){
         roomsInArea.push(r);
       }
     }
-    socket.emit('newMessage', roomsInArea);
+    socket.emit('getRoomsInArea', roomsInArea);
   });
 });
 
 const PORT = 80;
 http.listen(PORT, function(){
-  console.log('Staring Elephant Server on Port ' + PORT);
+	console.log('elephant server v0.0.1');
+  console.log('Starting on port ' + PORT);
 });
 
 function getRoomByID(id){
