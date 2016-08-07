@@ -126,25 +126,30 @@ io.on('connection', function(socket){
     var room = createRoom(latitude,longitude,name);
     io.emit('newRoom',room);
   });
-
-  socket.on('newTopic', function(roomID, user, text){
-    var topic = createTopic(getRoomByID(roomID), user, text);
-    
-    var client = new net.Socket();
+socket.on('getSuggestion', function(quest){
+	var client = new net.Socket();
     client.connect(4000, 'trevortknguyen.xyz', function() {
-	console.log('Querying Python NLP Server...');
-	client.write(text);
+        console.log('Querying Python NLP Server...');
+        client.write(quest);
     });
 
     client.on('data', function(data) {
-	console.log('Received: ' + data);
-	client.destroy();
+        var re = new RegExp("\\(\\d+, \\[\"|\", \"|\"\\]\\)");
+        data = data.split(re);
+        console.log('Received: ' + data);
+	data.clean("");
+	data.clean(undefined);
+	socket.emit('getSuggestion',data[0]);
+        client.destroy();
     });
 
     client.on('close', function() {
-	console.log('Connection closed');
+        console.log('Connection closed');
     });
 
+});
+  socket.on('newTopic', function(roomID, user, text){
+    var topic = createTopic(getRoomByID(roomID), user, text);
     io.emit('newTopic', roomID, topic);
   });
 
