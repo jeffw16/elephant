@@ -29,10 +29,10 @@ class NLPProcessor(object):
 	    qDict[a] = self.tag_similarity(aTagged, tagged)
 	    if qDict[a] > max_count:
 		max_count = qDict[a] 
-
-	for a in self.listQuestions:
-	    if qDict[a] == max_count:
-		best_matches.append(a)
+	if max_count is not 0:
+	    for a in self.listQuestions:
+	        if qDict[a] == max_count:
+	            best_matches.append(a)
 	self.addQuestion(question)
 	return (max_count, best_matches)
 

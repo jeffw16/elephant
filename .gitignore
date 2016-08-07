@@ -39,6 +39,7 @@ jspm_packages
 
 # Python Virtualenv
 /nlp/venv/
+/nlp/build/
 
 # Python
 *.pyc
