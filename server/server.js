@@ -140,7 +140,7 @@ socket.on('getSuggestion', function(quest){
 	data.clean("");
 	data.clean(undefined);
 	socket.emit('getSuggestion',data[0]);
-        client.destroy();
+//        client.destroy();
     });
 
     client.on('close', function() {
