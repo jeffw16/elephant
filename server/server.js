@@ -6,6 +6,16 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var fs = require('fs');
+var mysql = require('mysql');
+
+var pool      =    mysql.createPool({
+    connectionLimit : 100, //important
+    host     : 'w.chompfish.xyz',
+    user     : 'myuser',
+    password : 'mypass',
+    database : 'elephant_testing',
+    debug    :  false
+});
 
 const viewRange = 1;
 
@@ -17,18 +27,90 @@ var Room = function(latitude, longitude, name, id){
 	this.topics = [];
 };
 
-var Topic = function(user, text){
+var Topic = function(user, text, roomID, id){
+  this.id = id;
 	this.user = user;
 	this.text = text;
+  this.roomID = roomID;
 	this.messages = [];
 }
 
-var Message = function(user, text){
+var Message = function(user, text, roomID, topicID, id){
+  this.id = id;
+  this.roomID = roomID;
+  this.topicID = topicID;
 	this.user = user;
 	this.text = text;
 };
 
 var rooms = [];
+
+
+function sendQuery(data, callback) {
+
+    pool.getConnection(function(err,connection){
+        if (err) {
+          console.log('Cannot connect');
+          return;
+        }
+
+        console.log('connected as id ' + connection.threadId);
+        console.log(data);
+        connection.query(data, function(err,rows){
+            connection.release();
+            if(!err) {
+              //console.log(rows);
+              callback(rows);
+            }else{
+              console.log("Error");
+            }
+        });
+  });
+}
+
+
+function loadFromDataBase(){
+  var row;
+  sendQuery("SELECT * from Rooms", function(data){
+    row = data;
+    objs = JSON.parse(JSON.stringify(row));
+
+
+    for(var i=0; i<objs.length; i++){
+      room = new Room(objs[i].latitude, objs[i].longitude, objs[i].name, objs[i].id);
+      rooms.push(room);
+    }
+
+
+          sendQuery("SELECT * from Topics", function(data){
+    row = data;
+    objs = JSON.parse(JSON.stringify(row));
+        for(var i=0; i<objs.length; i++){
+      topic = new Topic(objs[i].user, objs[i].text, objs[i].roomID, objs[i].id);
+      rooms[objs[i].roomID].topics.push(topic);
+    }
+
+  sendQuery("SELECT * from Messages", function(data){
+    row = data;
+    objs = JSON.parse(JSON.stringify(row));
+
+    for(var i=0; i<objs.length; i++){
+      message = new Message(objs[i].user, objs[i].text, objs[i].roomID, objs[i].topicID, objs[i].id);
+      rooms[objs[i].roomID].topics[objs[i].topicID].messages.push(message);
+    }
+
+
+
+  });
+
+
+  });
+
+  });
+}
+
+loadFromDataBase();
+
 app.use(express.static('client'));
 app.get('/', function(req, res){
   console.log(__dirname);
@@ -38,18 +120,19 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
 
+  socket.on('newRoom', function(latitude, longitude, name){
+    var room = createRoom(latitude,longitude,name);
+    io.emit('newRoom',room);
+  });
+
   socket.on('newTopic', function(roomID, user, text){
   	var topic = createTopic(getRoomByID(roomID), user, text);
     io.emit('newTopic', roomID, topic);
   });
 
-  socket.on('newRoom', function(latitude, longitude, name){
-  	var room = createRoom(latitude,longitude,name);
-    io.emit('newRoom',room);
-  });
-
-  socket.on('newMessage', function(latitude, longitude, roomID, topicID, user, text){
-  	var messsage = createMessage(getTopicByID(getRoomByID(roomID), topicID), user,text);
+  socket.on('newMessage', function(roomID, topicID, user, text){
+    console.log(roomID+" "+topicID);
+  	var message = createMessage(getTopicByID(getRoomByID(roomID), topicID), user,text);
     io.emit('newMessage', roomID, topicID, message);
   });
 
@@ -112,18 +195,23 @@ function getTopicByID(room, id){
 function createRoom(latitude, longitude, name){
   console.log("Creating Room "+ name +" at "+latitude+" "+longitude);
   	var room = new Room(latitude, longitude, name, rooms.length);
+    sendQuery("INSERT INTO Rooms values(" + latitude + ", " + longitude + ", '" + name + "', " + rooms.length + ")", function(e){});
+    room.topics = [];
   	rooms.push(room);
     return room;
 }
 
 function createTopic(room, user, text){
-  var topic = new Topic(user, text);
+  var topic = new Topic(user, text, room.id, room.topics.length);
+      sendQuery("INSERT INTO Topics values( '" + user + "', '" + text + "', " + room.id + ", " + room.topics.length + ")", function(e){});
 	room.topics.push(topic);
+  topic.messages = [];
   return topic;
 }
 
 function createMessage(topic, user, text){
-  var message = new Message(user, text);
-	question.messages.push(message);
+  var message = new Message(user, text, topic.roomID, topic.id, topic.messages.length);
+      sendQuery("INSERT INTO Messages values( '" + user + "', '" + text + "', " + topic.roomID + ", " + topic.id + ", " + topic.messages.length + ")", function(e){});
+	topic.messages.push(message);
   return message;
 }

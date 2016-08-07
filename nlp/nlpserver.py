@@ -1,19 +1,36 @@
-# This is the Python server that will process all of tthe questions
-# It is supposed to link duplicate questions together
+import socket
+import nlp
 
-import nltk
+class NLPServer(object):
+    def __init__(self, ip, port):
+	self.sock = socket.socket()
+	self.sock.bind((ip, port))
+	self.processor = nlp.NLPProcessor()
+	print "Established Server"
 
-class NLPProcessor(object):
-    def __init__(self):
-	self.listQuestions = []
-	self.listQuestionsTagged = []
+    def listen(self):
+	import thread
+	self.sock.listen(5)
+	print "Started listening at port."
+	while True:
+	    c = self.sock.accept()
+	    cli_sock, cli_addr = c
+	    
+	    try:
+		print 'Got connection from', cli_addr
+		thread.start_new_thread(self.manageRequest, (cli_sock,))
+	    except Exception, Argument:
+		print Argument
+		self.sock.close()
+		quit()
 
-    def addQuestion(self, question):
-	self.listQuestions.append(question)	
-	tokens = nltk.word_tokenize(question)
-	taggedQuestion = nltk.pos_tag(tokens)
-	self.listQuestionsTagged.append(taggedQuestion)
+    def manageRequest(self, cli_sock):
+	data = cli_sock.recv(8192)
+	result = self.processor.processQuestion(data)
+	cli_sock.send(str(result))
+	cli_sock.close()
 
-    def checkQuestionMatch(self, question):
-	pass
-
+# server = NLPServer('127.0.0.1', 3369)
+import sys
+server = NLPServer(str(sys.argv[1]), int(sys.argv[2]))
+server.listen()
