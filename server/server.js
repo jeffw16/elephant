@@ -32,8 +32,7 @@ var Topic = function(user, text, roomID, id){
 	this.user = user;
 	this.text = text;
   this.roomID = roomID;
-	th
-  is.messages = [];
+	this.messages = [];
 }
 
 var Message = function(user, text, roomID, topicID, id){
@@ -76,10 +75,21 @@ function loadFromDataBase(){
     row = data;
     objs = JSON.parse(JSON.stringify(row));
 
+
     for(var i=0; i<objs.length; i++){
+      room = new Room(objs[i].latitude, objs[i].longitude, objs[i].name, objs[i].id);
+      rooms.push(room);
+    }
+
+
+          sendQuery("SELECT * from Topics", function(data){
+    row = data;
+    objs = JSON.parse(JSON.stringify(row));
+        for(var i=0; i<objs.length; i++){
       topic = new Topic(objs[i].user, objs[i].text, objs[i].roomID, objs[i].id);
       room[obhs[i].roomID].topics.push(room);
     }
+
   sendQuery("SELECT * from Messages", function(data){
     row = data;
     objs = JSON.parse(JSON.stringify(row));
@@ -89,15 +99,10 @@ function loadFromDataBase(){
       room[obhs[i].roomID].topics[objs[i].topicID].messages.push(messsage);
     }
 
-      sendQuery("SELECT * from Topics", function(data){
-    row = data;
-    objs = JSON.parse(JSON.stringify(row));
 
-    for(var i=0; i<objs.length; i++){
-      room = new Room(objs[i].latitude, objs[i].longitude, objs[i].name, objs[i].id);
-      rooms.push(room);
-    }
+
   });
+
 
   });
 
@@ -115,14 +120,14 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
 
+  socket.on('newRoom', function(latitude, longitude, name){
+    var room = createRoom(latitude,longitude,name);
+    io.emit('newRoom',room);
+  });
+
   socket.on('newTopic', function(roomID, user, text){
   	var topic = createTopic(getRoomByID(roomID), user, text);
     io.emit('newTopic', roomID, topic);
-  });
-
-  socket.on('newRoom', function(latitude, longitude, name){
-  	var room = createRoom(latitude,longitude,name);
-    io.emit('newRoom',room);
   });
 
   socket.on('newMessage', function(roomID, topicID, user, text){
@@ -190,6 +195,7 @@ function getTopicByID(room, id){
 function createRoom(latitude, longitude, name){
   console.log("Creating Room "+ name +" at "+latitude+" "+longitude);
   	var room = new Room(latitude, longitude, name, rooms.length);
+    sendQuery("INSERT INTO Rooms values(" + latitude + ", " + longitude + ", '" + name + "', " + rooms.length + ")", function(e){});
     room.topics = [];
   	rooms.push(room);
     return room;
@@ -197,6 +203,7 @@ function createRoom(latitude, longitude, name){
 
 function createTopic(room, user, text){
   var topic = new Topic(user, text, room.id, room.topics.length);
+      sendQuery("INSERT INTO Topics values( '" + user + "', '" + text + "', " + room.id + ", " + room.topics.length + ")", function(e){});
 	room.topics.push(topic);
   topic.messages = [];
   return topic;
@@ -204,6 +211,7 @@ function createTopic(room, user, text){
 
 function createMessage(topic, user, text){
   var message = new Message(user, text, topic.roomID, topic.id, topic.messages.length);
+      sendQuery("INSERT INTO Messages values( '" + user + "', '" + text + "', " + topic.roomID + ", " + topic.id + ", " + topic.messages.length + ")", function(e){});
 	topic.messages.push(message);
   return message;
 }
