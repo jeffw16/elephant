@@ -32,7 +32,8 @@ var Topic = function(user, text, roomID, id){
 	this.user = user;
 	this.text = text;
   this.roomID = roomID;
-	this.messages = [];
+	th
+  is.messages = [];
 }
 
 var Message = function(user, text, roomID, topicID, id){
@@ -76,20 +77,30 @@ function loadFromDataBase(){
     objs = JSON.parse(JSON.stringify(row));
 
     for(var i=0; i<objs.length; i++){
-      room = new Room(objs[i].latitude, objs[i].longitude, objs[i].name, objs[i].id);
-      rooms.push(room);
+      topic = new Topic(objs[i].user, objs[i].text, objs[i].roomID, objs[i].id);
+      room[obhs[i].roomID].topics.push(room);
     }
-  });
+  sendQuery("SELECT * from Messages", function(data){
+    row = data;
+    objs = JSON.parse(JSON.stringify(row));
 
-  sendQuery("SELECT * from Topics", function(data){
+    for(var i=0; i<objs.length; i++){
+      message = new Message(objs[i].user, objs[i].text, objs[i].roomID, objs[i].topicID, objs[i].id);
+      room[obhs[i].roomID].topics[objs[i].topicID].messages.push(messsage);
+    }
+
+      sendQuery("SELECT * from Topics", function(data){
     row = data;
     objs = JSON.parse(JSON.stringify(row));
 
     for(var i=0; i<objs.length; i++){
       room = new Room(objs[i].latitude, objs[i].longitude, objs[i].name, objs[i].id);
-      console.log(room.id);
       rooms.push(room);
     }
+  });
+
+  });
+
   });
 }
 
