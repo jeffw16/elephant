@@ -124,9 +124,9 @@ function update_questions_list() {
   $("#answers-list").html(messages_html_insert);
 }*/
 function update_messages_list() {
-  question_pane_html_insert = '<h2>' + rooms[roomi].topics[questioni].text + '</h2>';
+  question_pane_html_insert = '<h2 class="question-text">' + rooms[roomi].topics[questioni].text + '</h2>';
   for ( j = 0; j < rooms[roomi].topics[questioni].messages.length; j++ ) {
-    question_pane_html_insert += '<div class="well well-sm"><p>' + rooms[roomi].topics[questioni].messages[j].text + '</p></div>';
+    question_pane_html_insert += '<div class="well well-sm answer-well"><p class="answer-text">' + rooms[roomi].topics[questioni].messages[j].text + '</p></div>';
   }
   if ( rooms[roomi].topics[questioni].messages.length == 0 ) {
     question_pane_html_insert = '<div class="alert alert-elephant"><p><i>No answers here yet!</i> Want to help answer? Simply press the "Write an answer" button above to share your knowledge.</p></div>';

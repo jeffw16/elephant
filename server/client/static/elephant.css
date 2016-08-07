@@ -1,6 +1,13 @@
 .container-fluid {
   padding-top: 15px;
 }
+a {
+  color: #ff8400;
+  text-decoration: none;
+}
+a:focus, a:hover {
+  color: #ffa321;
+}
 .alert-elephant {
   color: #fff7ea;
   background-color: #ffb54c;
@@ -36,15 +43,18 @@
   background-color: #dfa600;
   border-color: #be8d00;
 }
-a {
-    color: #ff8400;
-    text-decoration: none;
-}
 .nav-pills>li.active>a{
-    color: #fff;
-    background-color: #f89406;
+  color: #fff;
+  background-color: #f89406;
 }
 .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
-    color: #fff;
-    background-color: #d87400;
+  color: #fff;
+  background-color: #d87400;
+}
+.question-text {
+  color: #dc6900;
+}
+.answer-well {
+  background-color: #ffdba7;
+  border: 1px solid #ffbf5b;
 }
