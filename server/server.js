@@ -131,7 +131,7 @@ io.on('connection', function(socket){
     var topic = createTopic(getRoomByID(roomID), user, text);
     
     var client = new net.Socket();
-    client.connect(4000 'trevortknguyen.xyz', function() {
+    client.connect(4000, 'trevortknguyen.xyz', function() {
 	console.log('Querying Python NLP Server...');
 	client.write(text);
     });
