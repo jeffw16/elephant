@@ -5,3 +5,6 @@ Presentation: https://docs.google.com/presentation/d/1282BPS6B9_xtl11t6Lepab4-5J
 
 
 Visit: http://elephant.mywikis.net:8008
+
+
+Created by Christian Duffee, Joshua Kim, Trevor Nguyen, Sammy Shin, and Jeffrey Wang. Logo by Justin Potts.
